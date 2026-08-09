@@ -1,0 +1,28 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# Node (for later phases)
+node_modules/
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+
+# Generated data files (reproducible from notebook 1)
+ml/data/X_train.csv
+ml/data/X_test.csv
+ml/data/y_train.csv
+ml/data/y_test.csv
