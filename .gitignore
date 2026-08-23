@@ -1,3 +1,14 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+
+# Environment variables (secrets - never commit)
+.env
+.env.local
+
 # Python
 venv/
 __pycache__/
@@ -5,21 +16,8 @@ __pycache__/
 *.pyo
 .ipynb_checkpoints/
 
-# Node (for later phases)
+# Node
 node_modules/
-dist/
-build/
-
-# Environment variables
-.env
-.env.local
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
 
 # Generated data files (reproducible from notebook 1)
 ml/data/X_train.csv
