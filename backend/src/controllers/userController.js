@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
 const registerUser = async (req, res, next) => {
   try {
@@ -11,54 +12,57 @@ const registerUser = async (req, res, next) => {
 
     const { name, email, password } = req.body;
 
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email is already registered' });
+    }
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    console.log('Hashed password:', hashedPassword);
-
-    const fakeUserId = 'temp-user-id-123';
+    const newUser = await User.create({
+      name,
+      email,
+      password: hashedPassword
+    });
 
     const token = jwt.sign(
-      { id: fakeUserId, email: email },
+      { id: newUser._id, email: newUser.email },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
 
-    res.json({
+    res.status(201).json({
       message: 'User registered successfully',
       token: token,
-      user: { name, email }
+      user: { name: newUser.name, email: newUser.email }
     });
   } catch (err) {
     next(err);
   }
 };
 
-// TEMPORARY fake "database" - a pre-hashed password for testing login
-// This simulates a user who registered with password "test1234"
-const FAKE_USER = {
-  id: 'temp-user-id-123',
-  name: 'Ankit Kimothi',
-  email: 'ankit@example.com',
-  hashedPassword: '$2b$10$XlG1cKxlnugKZ1PVJoGhm.BEroscBuOrZD4n42GYL2oXKLgK8laBO'
-};
-
 const loginUser = async (req, res, next) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
     const { email, password } = req.body;
 
-    if (email !== FAKE_USER.email) {
+    const user = await User.findOne({ email });
+    if (!user) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    const isMatch = await bcrypt.compare(password, FAKE_USER.hashedPassword);
-
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
     const token = jwt.sign(
-      { id: FAKE_USER.id, email: FAKE_USER.email },
+      { id: user._id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -66,7 +70,7 @@ const loginUser = async (req, res, next) => {
     res.json({
       message: 'Login successful',
       token: token,
-      user: { name: FAKE_USER.name, email: FAKE_USER.email }
+      user: { name: user.name, email: user.email }
     });
   } catch (err) {
     next(err);
