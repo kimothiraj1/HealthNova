@@ -1,7 +1,13 @@
+const { validationResult } = require('express-validator');
 const HealthLog = require('../models/HealthLog');
 
 const createHealthLog = async (req, res, next) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
     const { date, weight, sleepHours, steps, waterIntake } = req.body;
 
     const newLog = await HealthLog.create({
