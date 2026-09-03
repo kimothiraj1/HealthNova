@@ -4,6 +4,7 @@ const connectDB = require('./src/config/db');
 const healthRoutes = require('./src/routes/healthRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 const healthLogRoutes = require('./src/routes/healthLogRoutes');
+const predictionRoutes = require('./src/routes/predictionRoutes');
 const requestLogger = require('./src/middleware/logger');
 const errorHandler = require('./src/middleware/errorHandler');
 
@@ -18,6 +19,7 @@ app.use(requestLogger);
 app.use('/api/users', userRoutes);
 app.use('/api/health', healthRoutes);
 app.use('/api/logs', healthLogRoutes);
+app.use('/api/predict', predictionRoutes);
 
 app.use(errorHandler);
 
