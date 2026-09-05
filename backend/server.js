@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const connectDB = require('./src/config/db');
 const healthRoutes = require('./src/routes/healthRoutes');
 const userRoutes = require('./src/routes/userRoutes');
@@ -13,6 +14,7 @@ connectDB();
 const app = express();
 const PORT = 5000;
 
+app.use(cors());
 app.use(express.json());
 app.use(requestLogger);
 
