@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { createHealthLog, getMyHealthLogs } from '../services/healthLogService';
 import { getPrediction } from '../services/predictionService';
 
 function Dashboard() {
+  const navigate = useNavigate();
+
   const [logs, setLogs] = useState([]);
   const [date, setDate] = useState('');
   const [weight, setWeight] = useState('');
@@ -40,6 +43,11 @@ function Dashboard() {
   useEffect(() => {
     fetchLogs();
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -84,7 +92,10 @@ function Dashboard() {
 
   return (
     <div>
-      <h2>Dashboard</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2>Dashboard</h2>
+        <button onClick={handleLogout}>Logout</button>
+      </div>
 
       <form onSubmit={handleSubmit}>
         <div>
