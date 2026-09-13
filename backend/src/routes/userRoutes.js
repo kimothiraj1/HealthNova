@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const { body } = require('express-validator');
+const authLimiter = require('../middleware/rateLimiter');
 const { registerUser, loginUser } = require('../controllers/userController');
-const protect = require('../middleware/authMiddleware');
 
 router.post('/register',
+  authLimiter,
   [
     body('name').notEmpty().withMessage('Name is required'),
     body('email').isEmail().withMessage('Valid email is required'),
@@ -14,14 +15,12 @@ router.post('/register',
 );
 
 router.post('/login',
+  authLimiter,
   [
     body('email').isEmail().withMessage('Valid email is required'),
     body('password').notEmpty().withMessage('Password is required')
   ],
   loginUser
 );
-router.get('/profile', protect, (req, res) => {
-  res.json({ message: 'This is protected data', user: req.user });
-});
 
 module.exports = router;
