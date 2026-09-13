@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const connectDB = require('./src/config/db');
 const healthRoutes = require('./src/routes/healthRoutes');
 const userRoutes = require('./src/routes/userRoutes');
@@ -14,7 +15,16 @@ connectDB();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+const corsOptions = {
+  origin: [
+    'http://localhost:5173',
+    'https://health-nova-liart.vercel.app'
+  ],
+  credentials: true
+};
+
+app.use(helmet());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(requestLogger);
 
